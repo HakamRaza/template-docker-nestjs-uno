@@ -133,3 +133,6 @@ dist
 *.env
 !*example.env
 data
+.gitignore
+.git
+.dockerignore

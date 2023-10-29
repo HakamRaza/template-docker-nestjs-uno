@@ -1,0 +1,51 @@
+###################
+# BUILD FOR LOCAL
+###################
+# This utilised a single stage build.
+
+#
+# Build base on node
+#
+FROM node:18-alpine
+
+#
+# Create app directory. 
+# Must be the same as in docker-compose.yml
+#
+WORKDIR /var/www/app
+
+#
+# Copying this first prevents re-running npm install on every code change.
+#
+COPY --chown=node:node ./app/package*.json ./
+
+#
+# Install app dependencies
+#
+    # clean the installed node packages in a node based project
+RUN npm ci glob rimraf \
+    # install dependecies
+    && npm ci \
+    # change permission to user 'node'
+    && chown -R node:node ./
+
+#
+# Copy app code to docker image
+#
+COPY --chown=node:node ./app .
+
+#
+# Run app as `node` user
+#
+USER node
+
+#
+# Open port 3000 (by default NestJS is running at port 3000, if custom, changed this)
+# Must be the same as in docker-compose.yml
+#
+EXPOSE 3000
+
+#
+# Execute app in `dev mode` when container is run
+#
+CMD ["npm", "run", "start:dev"]
