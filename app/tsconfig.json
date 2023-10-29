@@ -1,0 +1,63 @@
+{
+	"compilerOptions": {
+		"composite": false,
+		"declaration": false,
+		"declarationMap": false,
+		"alwaysStrict": true,
+		"noUnusedParameters": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"sourceMap": true,
+		"importHelpers": true,
+		"target": "ES2019",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"allowJs": false,
+		"pretty": true,
+		"noEmitOnError": false,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"strictPropertyInitialization": false,
+		"noFallthroughCasesInSwitch": true,
+		"outDir": "./dist",
+		"baseUrl": "./",
+		"rootDir": "./",
+		"noLib": false,
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+
+		"strictNullChecks": false,
+		"removeComments": true,
+		"lib": ["dom", "es2019"],
+		"plugins": [
+			{
+				"name": "tslint-language-service"
+			}
+		],
+		"preserveConstEnums": true,
+		"allowSyntheticDefaultImports": true,
+		"noUnusedLocals": false,
+		"noImplicitAny": false,
+		"esModuleInterop": false,
+		"resolveJsonModule": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"typeRoots": ["node_modules/@types"]
+	},
+	"exclude": [
+		"coverage/**/*",
+		"tmp",
+		"node_modules",
+		"dist/**/*",
+		"build",
+		"lib",
+		"test",
+		"__tests__",
+		"**/*.test*",
+		"**/*.spec*",
+		"packages/*/node_modules",
+		"packages/*/lib",
+		"packages/*/dist",
+		"packages/*/build"
+	]
+}
