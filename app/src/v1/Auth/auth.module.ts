@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 // Local files
-import { UsersRepository } from 'src/shared/Repositories/users.repository';
+import { UserRepository } from 'src/shared/Repositories/user.repository';
 import { RolesGuard } from 'src/shared/Guards/roles.guard';
 import { JwtStrategy } from './Strategy/jwt.strategy';
 import { configService } from 'src/shared/Services/config.service';
@@ -17,7 +17,7 @@ import { MailService } from 'src/shared/Services/mail.service';
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([
-			UsersRepository,
+			UserRepository,
 		]),
 		PassportModule.register({ defaultStrategy: 'jwt' }), // Authentication
 		JwtModule.registerAsync({
@@ -37,7 +37,7 @@ import { MailService } from 'src/shared/Services/mail.service';
 	providers: [
 		AuthService,
 		MailService,
-		UsersRepository,
+		UserRepository,
 		JwtStrategy, // Authentication
 		{
 			provide: APP_GUARD,

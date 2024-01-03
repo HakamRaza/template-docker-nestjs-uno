@@ -14,7 +14,7 @@ import { UserEntity } from '../Entities/user.entity';
 import { RegisterDto } from 'src/v1/Auth/Dto/register.dto';
 
 @Injectable()
-export class UsersRepository extends Repository<UserEntity> {
+export class UserRepository extends Repository<UserEntity> {
 	constructor(private dataSource: DataSource) {
 		super(UserEntity, dataSource.createEntityManager());
 	}
