@@ -54,6 +54,7 @@ export class UserRepository extends Repository<UserEntity> {
 		try {
 			return this.findOneOrFail({
 				select: {
+					id: true,
 					username: true,
 					password: true,
 					is_banned: true,

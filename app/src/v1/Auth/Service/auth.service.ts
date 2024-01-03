@@ -13,7 +13,7 @@ import { randomBytes } from 'crypto';
 import * as argon2 from 'argon2'
 
 // Local files
-import { UsersRepository } from 'src/shared/Repositories/users.repository';
+import { UserRepository } from 'src/shared/Repositories/user.repository';
 import { UserEntity } from 'src/shared/Entities/user.entity';
 import { SessionTokenRepository } from 'src/shared/Repositories/session-token.repository';
 import { RegisterDto } from '../Dto/register.dto';
@@ -28,7 +28,7 @@ import { JWT_ROLE, JWT_SESSION_TOKEN, JWT_USER_ID } from 'src/shared/Constant';
 @Injectable()
 export class AuthService {
 	constructor(
-		private readonly userRepository: UsersRepository,
+		private readonly userRepository: UserRepository,
 		private readonly sessionTokenRepository: SessionTokenRepository,
 		private readonly jwtService: JwtService,
 		private readonly mailService: MailService,
