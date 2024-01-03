@@ -6,12 +6,17 @@ import { Transform, Type } from "class-transformer";
 import {
 	IsAlphanumeric,
 	IsEmail,
+	IsEnum,
+	IsInt,
 	IsNotEmpty,
 	IsString,
 	Length,
 	MinLength,
 	NotContains
 } from "class-validator";
+
+// local files
+import { RolesEnum } from "src/shared/Enums/roles.enums";
 
 export class RegisterDto {
 	@ApiProperty({
@@ -45,4 +50,12 @@ export class RegisterDto {
 	@NotContains(' ')
 	@Length(5, 100)
     password: string;
+
+	@ApiProperty({
+		example: Object.values(RolesEnum)[0],
+		enum: Object.values(RolesEnum),
+	})
+	@IsInt()
+	@IsEnum(Object.values(RolesEnum))
+	role: number;
 }

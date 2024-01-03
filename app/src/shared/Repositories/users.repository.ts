@@ -39,7 +39,8 @@ export class UsersRepository extends Repository<UserEntity> {
 			const newUser: UserEntity = this.create({
 				username: dto.username,
 				password: dto.password,
-				email: dto.email
+				email: dto.email,
+				role: dto.role
 			})
 
 			return await this.save(newUser);
