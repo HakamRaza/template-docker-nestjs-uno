@@ -4,15 +4,15 @@ import { Reflector } from '@nestjs/core';
 
 // Local files
 import { jwtAddonService } from '../Services/jwt-manipulation.service';
-import { JWT_ROLE, ROLES } from '../Constant';
+import { JWT_ROLE, ROLE } from '../Constant';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
 	constructor(private readonly reflector: Reflector) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
-		const role = this.reflector.get<Array<number>>(
-			ROLES,
+		const role = this.reflector.get<number>(
+			ROLE,
 			context.getHandler(),
 		);
 
@@ -26,7 +26,7 @@ export class RolesGuard implements CanActivate {
 			JWT_ROLE,
 		);
 
-		// check role from JWT is exist in @Role
-		return role.includes(userRole);
+		// role of higher tier allow for lower tier route
+		return (userRole >= role);
 	}
 }
