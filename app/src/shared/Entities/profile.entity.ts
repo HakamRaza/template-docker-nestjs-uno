@@ -21,9 +21,9 @@ export class ProfileEntity {
     user_id: number;
 
     @Column({ type: 'string', length: 100 })
-    fullname: string
+    fullname: string;
 
-    @Column({ type: 'bytea' })
+    @Column({ type: 'bytea', nullable: true })
     image: Buffer;
 
     @Column({ type: 'string', length: 250, nullable: true })
