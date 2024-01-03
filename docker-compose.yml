@@ -15,9 +15,9 @@ services:
     # bind volume to docker 'pgdata' folder to avoid data loss on next run
     volumes:
       - pgdata:/var/lib/postgresql/data
-    # load .env properties from .env file 'docker.DEV.env'
+    # load .env properties from docker.env file 'docker.env'
     env_file:
-      - docker.DEV.env
+      - docker.env
     # connect to 'backend' docker network
     networks:
       - backend
@@ -32,10 +32,10 @@ services:
     # bind volume to docker 'pgadmin' folder to avoid data loss on next run
     volumes:
       - pgadmin:/var/lib/pgadmin
-    # load .env properties from .env file 'docker.DEV.env'
+    # load .env properties from docker.env file 'docker.env'
     # since .env properties are commonly shared between each services, use same key and file name
     env_file:
-      - docker.DEV.env
+      - docker.env
     networks:
       - backend
     # wait for database to initialize then run
@@ -43,7 +43,7 @@ services:
       - pgdb
 
   # app service - this service depending on Dockefile set up
-  dev-api:
+  app:
     container_name: dev-api
     # define location and name of Dockerfile
     build:
@@ -86,6 +86,6 @@ volumes:
   # volume name 'pgdata' use for pgadmin service
   pgadmin:
     name: app-pgadmin
-  # volume name 'pgdata' use for dev-api service
+  # volume name 'pgdata' use for app service
   nodemodules:
     name: app-nodemodules
