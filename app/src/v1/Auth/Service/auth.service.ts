@@ -14,14 +14,14 @@ import * as argon2 from 'argon2'
 
 // Local files
 import { UsersRepository } from 'src/shared/Repositories/users.repository';
-import { MailService } from 'src/shared/Services/mail.service';
-import { LoginDto } from '../Dto/login.dto';
-import { jwtAddonService } from 'src/shared/Services/jwt-manipulation.service';
-import { JWT_ROLE, JWT_SESSION_TOKEN, JWT_USER_ID } from 'src/shared/Constant';
 import { UserEntity } from 'src/shared/Entities/user.entity';
-import { JwtPayloadBody } from 'src/shared/Types/jwt-payload-body.type';
 import { SessionTokenRepository } from 'src/shared/Repositories/session-token.repository';
 import { RegisterDto } from '../Dto/register.dto';
+import { MailService } from 'src/shared/Services/mail.service';
+import { LoginDto } from '../Dto/login.dto';
+import { JwtPayloadBody } from 'src/shared/Types/jwt-payload-body.type';
+import { jwtAddonService } from 'src/shared/Services/jwt-manipulation.service';
+import { JWT_ROLE, JWT_SESSION_TOKEN, JWT_USER_ID } from 'src/shared/Constant';
 
 
 @ApiTags('v1/auth')
