@@ -4,6 +4,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 // Other dependencies
 import * as env from 'dotenv';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { RedisOptions } from 'ioredis';
 
 // Local files
 import { UserEntity } from '../Entities/user.entity';
@@ -19,7 +20,9 @@ export class ConfigService {
 	}
 
 	public isProduction(): boolean {
-		return this.getEnv('MODE') === 'PROD';
+		return (this.getEnv('MODE') + '')
+			.toLowerCase()
+			.startsWith('prod');
 	}
 
 	public getTypeOrmConfig(): TypeOrmModuleOptions {
@@ -53,6 +56,16 @@ export class ConfigService {
 				user: configService.getEnv('SMTP_USER'),
 				pass: configService.getEnv('SMTP_PASSWORD'),
 			},
+		};
+	}
+
+	public getRedisConfig(): RedisOptions {
+		return {
+			host: configService.getEnv('REDIS_HOST'),
+			port: configService.getEnv('REDIS_PORT'),
+			username: configService.getEnv('REDIS_USERNAME'),
+			password: configService.getEnv('REDIS_PASSWORD'),
+			db: configService.getEnv('REDIS_DB'),
 		};
 	}
 }
