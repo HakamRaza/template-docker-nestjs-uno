@@ -18,19 +18,22 @@ export class NoteEntity {
     }
 
     @PrimaryColumn({ type: 'bigint' })
+    id: number;
+
+    @Column({ type: 'bigint' })
     user_id: number;
 
     @Column({ type: 'string', length: 100 })
-    title: string
+    title: string;
 
     @Column({ type: 'string' })
     description: string;
 
     @CreateDateColumn('date')
-    created_at: Date
+    created_at: Date;
 
     @UpdateDateColumn('date')
-    updated_at: Date
+    updated_at: Date;
 
     //--------------------  Relationship  -------------------- 
 

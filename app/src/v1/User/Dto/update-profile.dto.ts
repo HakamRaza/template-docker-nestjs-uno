@@ -24,7 +24,6 @@ export class UpdateProfileDto {
 	@Transform(({ value }) => value.trim().toUpperCase())
 	@Type(() => String)
 	@IsString()
-	@IsNotEmpty()
 	@Length(5, 200)
     fullname: string;
 
@@ -35,7 +34,6 @@ export class UpdateProfileDto {
 	@Transform(({ value }) => value.trim().toUpperCase())
 	@Type(() => String)
 	@IsString()
-	@IsNotEmpty()
 	@Length(5, 200)
     address: string;
 

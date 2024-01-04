@@ -18,6 +18,9 @@ import { JWT_USER_ID } from 'src/shared/Constant'
 import { ProfileRepository } from 'src/shared/Repositories/profile.repository'
 import { UpdateProfileDto } from '../Dto/update-profile.dto'
 import { ProfileEntity } from 'src/shared/Entities/profile.entity'
+import { PageOptionsDto } from 'src/shared/Dto/page-options.dto'
+import { NoteEntity } from 'src/shared/Entities/note.entity'
+import { AddNoteDto } from '../Dto/add-note.dto'
 
 
 @Injectable()
@@ -49,9 +52,23 @@ export class UserService {
         return this.profileRepository.addOrCreateNew(userId, dto);
     }
 
-    
-    
+
     //------------------------------ Notes ----------------------------------
 
+	async getNoteList(query: PageOptionsDto, fetchAll: boolean = false): Promise<[NoteEntity[], number]> {
 
+		return this.noteRepository.findNotes(query, fetchAll);
+	}
+
+    async addNote(bearer: string, dto: AddNoteDto): Promise<NoteEntity> {
+        // extract user_id from 'sub' token
+        const userId = await jwtAddonService.getTokenSubProperty(bearer, JWT_USER_ID);
+
+        return this.noteRepository.addNew(userId, dto);
+    }
+
+    async removeNote(noteId: number): Promise<void> {
+
+        return await this.noteRepository.removeById(noteId);
+    }
 }

@@ -29,6 +29,7 @@ import { RolesEnum } from 'src/shared/Enums/roles.enums'
 import { PageOptionsDto } from 'src/shared/Dto/page-options.dto'
 import { StatusOk } from 'src/shared/Types/http.type';
 import { UpdateProfileDto } from '../Dto/update-profile.dto';
+import { AddNoteDto } from '../Dto/add-note.dto';
 
 @ApiTags('v1/user')
 @Controller()
@@ -115,7 +116,7 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Roles(RolesEnum.admin) // only admin can delete notes
     @Delete('/notes/:id')
-    async addNote(
+    async removeNote(
         @Param() param: SingleIDDto,
     ): Promise<StatusOk> {
         await this.userService.removeNote(param.id);
