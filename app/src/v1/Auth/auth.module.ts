@@ -15,6 +15,7 @@ import { AuthService } from './Service/auth.service';
 import { AuthController } from './Controller/auth.controller';
 import { MailService } from 'src/shared/Services/mail.service';
 import { SessionTokenRepository } from 'src/shared/Repositories/session-token.repository';
+import { EmailProcessor } from 'src/shared/Processor/email.processor';
 
 @Module({
 	imports: [
@@ -22,6 +23,9 @@ import { SessionTokenRepository } from 'src/shared/Repositories/session-token.re
 			UserRepository,
 			SessionTokenRepository,
 		]),
+		BullModule.registerQueue({
+			name: 'emailQueue',
+		}),
 		PassportModule.register({ defaultStrategy: 'jwt' }), // Authentication
 		JwtModule.registerAsync({
 			useFactory: () => {
@@ -37,9 +41,6 @@ import { SessionTokenRepository } from 'src/shared/Repositories/session-token.re
 				};
 			},
 		}), // Authentication
-		BullModule.registerQueue({
-			name: 'email-queue',
-		}),
 	],
 	controllers: [AuthController],
 	providers: [
@@ -48,6 +49,7 @@ import { SessionTokenRepository } from 'src/shared/Repositories/session-token.re
 		UserRepository,
 		SessionTokenRepository,
 		JwtStrategy, // Authentication
+		EmailProcessor, // Processor for Email Queue
 		{
 			provide: APP_GUARD,
 			useClass: RolesGuard,

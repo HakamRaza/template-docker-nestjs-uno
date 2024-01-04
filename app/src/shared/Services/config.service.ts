@@ -62,9 +62,7 @@ export class ConfigService {
 		return {
 			host: configService.getEnv('REDIS_HOST'),
 			port: configService.getEnv('REDIS_PORT'),
-			username: configService.getEnv('REDIS_USERNAME'),
 			password: configService.getEnv('REDIS_PASSWORD'),
-			db: configService.getEnv('REDIS_DB'),
 		};
 	}
 }

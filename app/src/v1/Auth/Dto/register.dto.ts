@@ -41,9 +41,10 @@ export class RegisterDto {
 	password: string;
 
 	@ApiProperty({
-		example: Object.values(RolesEnum)[0],
+		example: RolesEnum.admin,
 		enum: Object.values(RolesEnum),
 	})
+	@Type(() => Number)
 	@IsInt()
 	@IsEnum(Object.values(RolesEnum))
 	role: number;

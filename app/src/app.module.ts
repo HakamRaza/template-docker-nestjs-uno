@@ -23,7 +23,7 @@ import { V1Module } from './v1/v1.module';
 			redis: configService.getRedisConfig(),
 			limiter: {
 				max: 4,
-				duration: 6000,
+				duration: 60000, //60s
 			},
 		}),
 		TypeOrmModule.forRootAsync({

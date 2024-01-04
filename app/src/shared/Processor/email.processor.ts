@@ -8,15 +8,23 @@ import { Job } from 'bull';
 // Local files
 import { MailService } from '../Services/mail.service';
 
-@Processor('email-queue')
+@Processor('emailQueue')
 export class EmailProcessor {
-	private readonly mailService = new MailService();
+	constructor(
+		private readonly mailService: MailService,
+	) {}
+	
+	private readonly logger = new Logger(EmailProcessor.name)
 
-	@Process('sendWelcomeMail')
+	// send welcome mail
+	@Process('welcome')
 	async handleSendWelcome(job: Job) {
-		// send welcome mail
-		await this.mailService.sendWelcomeMail(job.data.to).catch((_err) => {
+		const { data } = job;
+		this.logger.debug('Email sent');
+
+		await this.mailService.sendWelcomeMail(data.to).catch((_err) => {
 			console.error(_err);
+			this.logger.debug('Error sent email');
 		});
 	}
 }

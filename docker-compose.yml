@@ -24,6 +24,7 @@ services:
     networks:
       - backend
 
+
   # ------------------------------------------------------------
   # PGAdmin - database client
   # ------------------------------------------------------------
@@ -45,6 +46,7 @@ services:
     # wait for database to initialize then run
     depends_on:
       - app_pgdb
+
 
   # ------------------------------------------------------------
   # NestJS App - this service depending on Dockefile set up
@@ -74,6 +76,7 @@ services:
     depends_on:
       - app_pgdb
 
+
   # ------------------------------------------------------------
   # Redis - for queue, or caching
   # ------------------------------------------------------------
@@ -89,7 +92,10 @@ services:
     volumes:
       - redisdata:/data
     # Apply custom arguments to redis startup
-    command: redis-server --save 20 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+    command: /bin/sh -c "redis-server --save 20 1 --loglevel warning --requirepass $$REDIS_PASSWORD"
+    networks:
+      - backend
+
 
 # Define / create a network
 networks:
@@ -99,6 +105,7 @@ networks:
         name: network-backend
         # 'bridge' type define an isolated localhost network inside 'this' Docker
         driver: bridge
+
 
 # Define / create a Docker volume (folder)
 volumes:

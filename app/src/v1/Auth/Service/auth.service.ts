@@ -24,6 +24,7 @@ import { LoginDto } from '../Dto/login.dto';
 import { JwtPayloadBody } from 'src/shared/Types/jwt-payload-body.type';
 import { jwtAddonService } from 'src/shared/Services/jwt-manipulation.service';
 import { JWT_ROLE, JWT_SESSION_TOKEN, JWT_USER_ID } from 'src/shared/Constant';
+import { Transactional } from 'typeorm-transactional';
 
 @ApiTags('v1/auth')
 @Injectable()
@@ -32,19 +33,19 @@ export class AuthService {
 		private readonly userRepository: UserRepository,
 		private readonly sessionTokenRepository: SessionTokenRepository,
 		private readonly jwtService: JwtService,
-		@InjectQueue('email-queue') private readonly emailQueue: Queue,
+		@InjectQueue('emailQueue') private readonly emailQueue: Queue,
 	) {}
 
+	@Transactional()
 	async signup(dto: RegisterDto): Promise<UserEntity> {
 		// check email exist or username exist
 		const isExist = await this.userRepository.isEmailExist(dto.email);
-		if (isExist)
-			throw new ConflictException('Email or username is unavailable.');
+		if (isExist) throw new ConflictException('Email or username is unavailable.');
 
 		// register new user
 		const user = await this.userRepository.addNew(dto);
 
-		await this.emailQueue.add('sendWelcomeMail', {
+		await this.emailQueue.add('welcome', {
 			to: user.email,
 		});
 
