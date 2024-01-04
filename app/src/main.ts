@@ -8,6 +8,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // Other dependencies
+import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 import helmet from '@fastify/helmet';
@@ -19,6 +20,9 @@ import { AppModule } from './app.module';
 import { configService } from './shared/Services/config.service';
 
 async function bootstrap() {
+	// initialise transactional storage driver
+	initializeTransactionalContext({ storageDriver: StorageDriver.AUTO });
+
 	const fastifyAdapter = new FastifyAdapter({
 		logger: configService.isProduction() ? false : true,
 	});
@@ -112,7 +116,7 @@ async function bootstrap() {
 
 	app.listen(
 		Number(configService.getEnv('APP_PORT')) +
-			Number(configService.getEnv('INSTANCE_ID') || 0),
+		Number(configService.getEnv('INSTANCE_ID') || 0),
 		'0.0.0.0',
 	);
 }

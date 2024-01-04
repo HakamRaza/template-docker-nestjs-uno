@@ -14,10 +14,14 @@ import { configService } from 'src/shared/Services/config.service';
 import { AuthService } from './Service/auth.service';
 import { AuthController } from './Controller/auth.controller';
 import { MailService } from 'src/shared/Services/mail.service';
+import { SessionTokenRepository } from 'src/shared/Repositories/session-token.repository';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([UserRepository]),
+		TypeOrmModule.forFeature([
+			UserRepository,
+			SessionTokenRepository,
+		]),
 		PassportModule.register({ defaultStrategy: 'jwt' }), // Authentication
 		JwtModule.registerAsync({
 			useFactory: () => {
@@ -42,6 +46,7 @@ import { MailService } from 'src/shared/Services/mail.service';
 		AuthService,
 		MailService,
 		UserRepository,
+		SessionTokenRepository,
 		JwtStrategy, // Authentication
 		{
 			provide: APP_GUARD,

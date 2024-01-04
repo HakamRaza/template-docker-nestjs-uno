@@ -39,7 +39,7 @@ services:
       - ${DOCKER_PGADMIN_PORT}:80
     # bind volume to docker 'pgadmin' folder to avoid data loss on next run
     volumes:
-      - pgadmin:/var/lib/pgadmin
+      - pgadmindata:/var/lib/pgadmin
     networks:
       - backend
     # wait for database to initialize then run
@@ -78,15 +78,18 @@ services:
   # Redis - for queue, or caching
   # ------------------------------------------------------------
   app_redis:
+    container_name: app_redis
     image: redis:7.2-alpine
     hostname: app_redis
     env_file:
       - .env
     restart: unless-stopped
-    # Apply custom arguments to redis startup
-    command: redis-server --save 20 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
     ports:
       - ${DOCKER_REDIS_PORT}:${REDIS_PORT}
+    volumes:
+      - redisdata:/data
+    # Apply custom arguments to redis startup
+    command: redis-server --save 20 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
 
 # Define / create a network
 networks:
@@ -104,8 +107,11 @@ volumes:
     # volume name for Docker
     name: app-pgdata
   # volume name 'pgdata' use for pgadmin service
-  pgadmin:
+  pgadmindata:
     name: app-pgadmin
   # volume name 'pgdata' use for app service
   nodemodules:
     name: app-nodemodules
+  # volume for redis data
+  redisdata:
+    name: app-redis

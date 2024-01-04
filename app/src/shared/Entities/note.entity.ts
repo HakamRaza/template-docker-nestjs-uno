@@ -23,16 +23,16 @@ export class NoteEntity {
 	@Column({ type: 'bigint' })
 	user_id: number;
 
-	@Column({ type: 'string', length: 100 })
+	@Column({ type: 'varchar', length: 100 })
 	title: string;
 
-	@Column({ type: 'string' })
+	@Column({ type: 'text' })
 	description: string;
 
-	@CreateDateColumn('date')
+	@CreateDateColumn({ type: 'timestamptz', precision: 3 })
 	created_at: Date;
 
-	@UpdateDateColumn('date')
+	@UpdateDateColumn({ type: 'timestamptz', precision: 3 })
 	updated_at: Date;
 
 	//--------------------  Relationship  --------------------

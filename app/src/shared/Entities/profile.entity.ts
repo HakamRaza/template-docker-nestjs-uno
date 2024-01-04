@@ -20,7 +20,7 @@ export class ProfileEntity {
 	@PrimaryColumn({ type: 'bigint' })
 	user_id: number;
 
-	@Column({ type: 'string', length: 100 })
+	@Column({ type: 'varchar', length: 100 })
 	fullname: string;
 
 	@Column({ type: 'text', nullable: true })
@@ -32,10 +32,10 @@ export class ProfileEntity {
 	@Column({ type: 'bytea', nullable: true })
 	image_buffer: Buffer;
 
-	@Column({ type: 'string', length: 250, nullable: true })
+	@Column({ type: 'varchar', length: 250, nullable: true })
 	address: string;
 
-	@UpdateDateColumn('date')
+	@UpdateDateColumn({ type: 'timestamptz', precision: 3 })
 	updated_at: Date;
 
 	@BeforeInsert()

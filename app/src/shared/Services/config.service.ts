@@ -8,9 +8,10 @@ import { RedisOptions } from 'ioredis';
 
 // Local files
 import { UserEntity } from '../Entities/user.entity';
-import { ProfileEntity } from '../Entities/profile.entity';
-import { ResetPasswordEntity } from '../Entities/reset-password.entity';
 import { SessionTokenEntity } from '../Entities/session-token.entity';
+import { ResetPasswordEntity } from '../Entities/reset-password.entity';
+import { ProfileEntity } from '../Entities/profile.entity';
+import { NoteEntity } from '../Entities/note.entity';
 
 env.config();
 
@@ -37,7 +38,7 @@ export class ConfigService {
 				ProfileEntity,
 				ResetPasswordEntity,
 				SessionTokenEntity,
-				UserEntity,
+				NoteEntity,
 			],
 			synchronize: !this.isProduction(),
 			ssl: false,

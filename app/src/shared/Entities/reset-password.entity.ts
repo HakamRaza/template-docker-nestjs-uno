@@ -25,11 +25,7 @@ export class ResetPasswordEntity {
 	@Column({ type: 'text' })
 	hash: string;
 
-	@CreateDateColumn({
-		type: 'timestamptz',
-		precision: 3,
-		default: () => 'CURRENT_TIMESTAMP(3)',
-	})
+	@CreateDateColumn({type: 'timestamptz', precision: 3, default: () => 'CURRENT_TIMESTAMP(3)'})
 	cts: Date;
 
 	//--------------------  Relationship  --------------------

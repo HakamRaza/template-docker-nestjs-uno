@@ -26,7 +26,7 @@ export class UserEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ type: 'string', length: 80, unique: true })
+	@Column({ type: 'varchar', length: 80, unique: true })
 	email: string;
 
 	@Column({ type: 'text' })
@@ -41,10 +41,10 @@ export class UserEntity {
 	@Column({ type: 'date', nullable: true })
 	last_login: Date;
 
-	@CreateDateColumn('date')
+	@CreateDateColumn({type: 'timestamptz', precision: 3, default: () => 'CURRENT_TIMESTAMP(3)'})
 	created_at: Date;
 
-	@UpdateDateColumn('date')
+	@UpdateDateColumn({type: 'timestamptz', precision: 3, default: () => 'CURRENT_TIMESTAMP(3)'})
 	updated_at: Date;
 
 	@BeforeInsert()
