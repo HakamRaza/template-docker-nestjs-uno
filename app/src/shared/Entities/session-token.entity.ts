@@ -19,8 +19,8 @@ export class SessionTokenEntity {
 	@PrimaryColumn({ type: 'char', length: 20 })
 	token: string;
 
-	@Column({ type: 'uuid', unique: true })
-	user_id: string;
+	@Column({ type: 'bigint', unique: true })
+	user_id: number;
 
 	@Column({ type: 'timestamptz', precision: 3, nullable: true })
 	last_use_at: Date;

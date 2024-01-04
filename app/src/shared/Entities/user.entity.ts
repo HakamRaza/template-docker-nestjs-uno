@@ -24,10 +24,7 @@ export class UserEntity {
 	}
 
 	@PrimaryGeneratedColumn()
-	id: string;
-
-	@Column({ type: 'string', length: 17, unique: true })
-	username: string;
+	id: number;
 
 	@Column({ type: 'string', length: 80, unique: true })
 	email: string;

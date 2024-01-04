@@ -12,6 +12,6 @@ export interface EmailFullBody extends EmailSenderBody {
 }
 
 export interface WelcomeEmailBody extends EmailSenderBody {
-	username: string;
+	to: string;
 	websiteUrl: string
 }

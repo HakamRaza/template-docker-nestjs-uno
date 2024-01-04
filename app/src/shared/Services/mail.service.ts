@@ -5,10 +5,9 @@ import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
 // Local files
-
 import { configService } from './config.service';
-import { EmailFullBody, WelcomeEmailBody } from '../Dto/mail.type';
 import WelcomeTemplate from '../Template/Email/welcome.template';
+import { EmailFullBody, WelcomeEmailBody } from '../Dto/mail.type';
 
 @Injectable()
 export class MailService {
@@ -34,13 +33,12 @@ export class MailService {
 		});
 	}
 
-	public sendWelcomeMail(username: string, userEmail: string, ): Promise<void> {
+	public sendWelcomeMail(userEmail: string, ): Promise<void> {
 		const domain = configService.getEnv('APP_DOMAIN');
 
 		const body: WelcomeEmailBody = {
 			from: 'noreply@' + domain,
 			to: userEmail,
-			username,
 			websiteUrl: 'http://' + domain + '/login'
 		}
 

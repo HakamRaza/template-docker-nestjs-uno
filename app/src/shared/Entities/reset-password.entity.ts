@@ -16,11 +16,11 @@ export class ResetPasswordEntity {
 		Object.assign(this, partial);
 	}
 
-	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	@PrimaryGeneratedColumn()
+	id: number;
 
-	@Column({ type: 'uuid' })
-	user_id: string;
+	@Column({ type: 'bigint' })
+	user_id: number;
 
 	@Column({ type: 'text' })
 	hash: string;
