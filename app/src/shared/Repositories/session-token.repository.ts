@@ -33,7 +33,7 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 					},
 				},
 				where: {
-					user_id: dto.sub,
+					user_id: parseInt(dto.sub),
 					token: dto.jti,
 				},
 				relations: ['userData'],
@@ -47,7 +47,7 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 	async updateCurrentSession(dto: JwtPayloadBody): Promise<void> {
 		try {
 			await this.update(
-				{ token: dto.jti, user_id: dto.sub },
+				{ token: dto.jti, user_id: parseInt(dto.sub) },
 				{ last_use_at: () => 'NOW()' }
 			);
 		} catch (error) {
@@ -56,7 +56,7 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 		}
 	}
 
-	async removeAllToken(userId: string): Promise<void> {
+	async removeAllToken(userId: number): Promise<void> {
 		try {
 			await this.delete({ user_id: userId }); // remove all old token
 
@@ -66,14 +66,14 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 		}
 	}
 
-	async addToken(userId: string, token: string): Promise<void> {
+	async addToken(userId: number, token: string): Promise<void> {
 		await this.insert({ user_id: userId, token: token }); // save new token
 	}
 
 	async assignSession(dto: JwtPayloadBody): Promise<void> {
 		try {
-			await this.removeAllToken(dto.sub);
-			await this.addToken(dto.sub, dto.jti);
+			await this.removeAllToken(parseInt(dto.sub));
+			await this.addToken(parseInt(dto.sub), dto.jti);
 		} catch (error) {
 			console.error(error)
 			throw new BadRequestException('Failed to update session');

@@ -5,11 +5,14 @@ services:
   # ------------------------------------------------------------
   # PostgreSQL - database
   # ------------------------------------------------------------
-  pgdb:
+  app_pgdb:
     # set name for your container, if not random name will be assigned
-    container_name: postgres-db
+    container_name: app_pgdb
     # using pgsql version 15 alpine
     image: postgres:15-alpine
+    # load .env properties from .env file
+    env_file:
+      - .env
     # bind PC localhost:5432 to Docker localhost:5432
     ports: 
       - ${DOCKER_POSTGRES_PORT}:${POSTGRES_PORT}
@@ -17,9 +20,6 @@ services:
     # bind volume to docker 'pgdata' folder to avoid data loss on next run
     volumes:
       - pgdata:/var/lib/postgresql/data
-    # load .env properties from docker.env file 'docker.env'
-    env_file:
-      - docker.env
     # connect to 'backend' docker network
     networks:
       - backend
@@ -27,34 +27,36 @@ services:
   # ------------------------------------------------------------
   # PGAdmin - database client
   # ------------------------------------------------------------
-  pgadmin:
-    container_name: pgadmin
+  app_pgadmin:
+    container_name: app_pgadmin
     image: dpage/pgadmin4
-    # bind PC localhost:8080 to Docker localhost:80, open browser http://localhost:8080
+    # load .env properties from .env file '.env'
+    # since .env properties are commonly shared between each services, use same key and file name
+    env_file:
+      - .env
+    # bind PC localhost:port to Docker localhost:80, open browser http://localhost:8080
     ports:
       - ${DOCKER_PGADMIN_PORT}:80
     # bind volume to docker 'pgadmin' folder to avoid data loss on next run
     volumes:
       - pgadmin:/var/lib/pgadmin
-    # load .env properties from docker.env file 'docker.env'
-    # since .env properties are commonly shared between each services, use same key and file name
-    env_file:
-      - docker.env
     networks:
       - backend
     # wait for database to initialize then run
     depends_on:
-      - pgdb
+      - app_pgdb
 
   # ------------------------------------------------------------
   # NestJS App - this service depending on Dockefile set up
   # ------------------------------------------------------------
-  app:
-    container_name: dev-api
+  app_api:
+    container_name: app_api
     # define location and name of Dockerfile
     build:
       context: ./
       dockerfile: Dockerfile.DEV
+    env_file:
+      - .env
     # port you expose or set for your app. Same as Dockerfile
     # bind PC localhost:3000 to Docker localhost:3000, open browser http://localhost:3000
     ports:
@@ -64,26 +66,25 @@ services:
       - ./app:/var/www/app
       # to avoid nodemodules built in the image replace due to above, (./app has no node_modules!), move image node_modules to 'anynomous' folder
       - nodemodules:/var/www/app/node_modules
-    env_file:
-      - docker-dev.env
     restart: unless-stopped
     # command to execute when container run
     command: npm run start:dev
     networks:
       - backend
     depends_on:
-      - pgdb
+      - app_pgdb
 
   # ------------------------------------------------------------
-  # Redis
+  # Redis - for queue, or caching
   # ------------------------------------------------------------
-  redis_dev:
+  app_redis:
     image: redis:7.2-alpine
-    hostname: redis_dev
+    hostname: app_redis
+    env_file:
+      - .env
+    restart: unless-stopped
     # Apply custom arguments to redis startup
     command: redis-server --save 20 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
-    env_file:
-      -docker-dev.env
     ports:
       - ${DOCKER_REDIS_PORT}:${REDIS_PORT}
 
