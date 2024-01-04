@@ -19,12 +19,12 @@ import { UserRepository } from 'src/shared/Repositories/user.repository';
 import { UserEntity } from 'src/shared/Entities/user.entity';
 import { SessionTokenRepository } from 'src/shared/Repositories/session-token.repository';
 import { RegisterDto } from '../Dto/register.dto';
-import { MailService } from 'src/shared/Services/mail.service';
 import { LoginDto } from '../Dto/login.dto';
 import { JwtPayloadBody } from 'src/shared/Types/jwt-payload-body.type';
 import { jwtAddonService } from 'src/shared/Services/jwt-manipulation.service';
 import { JWT_ROLE, JWT_SESSION_TOKEN, JWT_USER_ID } from 'src/shared/Constant';
 import { Transactional } from 'typeorm-transactional';
+import { serializerService } from 'src/shared/Services/serializer.service';
 
 @ApiTags('v1/auth')
 @Injectable()
@@ -54,23 +54,17 @@ export class AuthService {
 
 	async login(dto: LoginDto): Promise<[UserEntity, string]> {
 		// find user
-		const user = await this.userRepository.findUserByEmail(dto.username);
+		const user = await this.userRepository.findUserByEmail(dto.email);
 		// check user is banned
-		if (user.is_banned)
-			throw new ForbiddenException(
-				'Account has been banned. Please contact support for further details.',
-			);
+		if (user.is_banned) throw new ForbiddenException('Account has been banned. Please contact support for further details.');
 
 		// check password passed
 		const isVerified = await argon2.verify(user.password, dto.password);
-		if (!isVerified)
-			throw new BadRequestException(
-				'User could not found by given credentials.',
-			);
+		if (!isVerified) throw new BadRequestException('User could not found by given credentials.');
 
 		// generate access token
 		const jwt: JwtPayloadBody = {
-			nbf: Math.floor(Date.now() / 1000) + 60 * 60,
+			nbf: Math.floor(Date.now() / 1000),
 			[JWT_ROLE]: user.role,
 			[JWT_USER_ID]: '' + user.id,
 			[JWT_SESSION_TOKEN]: randomBytes(10).toString('hex'),
@@ -80,7 +74,8 @@ export class AuthService {
 
 		// record token
 		await this.sessionTokenRepository.assignSession(jwt); // save token to DB
-
+		await serializerService.deleteProperties(user, ['password'])
+		
 		return [user, access_token];
 	}
 

@@ -26,7 +26,7 @@ export class ProfileEntity {
 	@Column({ type: 'text', nullable: true })
 	image_name: string;
 
-	@Column({ type: 'int', default: 0 })
+	@Column({ type: 'int', nullable: true })
 	image_size: number;
 
 	@Column({ type: 'bytea', nullable: true })

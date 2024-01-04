@@ -45,10 +45,7 @@ export class ProfileRepository extends Repository<ProfileEntity> {
 			},
 		});
 
-		if (!exist && !dto.fullname)
-			throw new BadRequestException(
-				'Full name is needed to create profile.',
-			);
+		if (!exist && !dto.fullname) throw new BadRequestException('Full name is needed to create profile.');
 
 		try {
 			const profile: ProfileEntity = this.create({
@@ -60,7 +57,11 @@ export class ProfileRepository extends Repository<ProfileEntity> {
 				address: dto.address || null,
 			});
 
-			return await this.save(profile);
+			if (exist) await this.update({ user_id: userId }, profile)
+			else await this.insert(profile);
+
+			return profile;
+
 		} catch (error) {
 			console.error(error);
 			throw new BadRequestException('Failed to save profile');

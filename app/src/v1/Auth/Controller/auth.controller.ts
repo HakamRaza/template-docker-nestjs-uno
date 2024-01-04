@@ -36,11 +36,7 @@ export class AuthController {
 	@Post('login')
 	async login(@Body() dto: LoginDto): Promise<ISerializeResponse> {
 		const [user, access_token] = await this.authService.login(dto);
-		return serializerService.serializeResponse(
-			'login_detail',
-			{ access_token, user },
-			user.id,
-		);
+		return serializerService.serializeResponse('login_detail', { access_token, user }, user.id);
 	}
 
 	@ApiBearerAuth()

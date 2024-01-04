@@ -6,6 +6,7 @@ import {
 	ManyToOne,
 	JoinColumn,
 	PrimaryColumn,
+	PrimaryGeneratedColumn,
 } from 'typeorm';
 
 // Local files
@@ -17,7 +18,7 @@ export class NoteEntity {
 		Object.assign(this, partial);
 	}
 
-	@PrimaryColumn({ type: 'bigint' })
+	@PrimaryGeneratedColumn({ type: 'bigint' })
 	id: number;
 
 	@Column({ type: 'bigint' })

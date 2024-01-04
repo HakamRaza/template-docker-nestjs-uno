@@ -5,6 +5,7 @@ import { Transform, Type } from 'class-transformer';
 // Other dependencies
 import {
 	IsAlphanumeric,
+	IsEmail,
 	IsNotEmpty,
 	IsString,
 	Length,
@@ -14,15 +15,14 @@ import {
 
 export class LoginDto {
 	@ApiProperty({
-		example: 'myuser123',
+		example: 'demo_user@email.com',
 	})
 	@Transform(({ value }) => value.trim().toLowerCase())
 	@Type(() => String)
-	@IsString()
+	@IsEmail()
 	@IsNotEmpty()
-	@MinLength(3)
-	@NotContains(' ')
-	username: string;
+	@MinLength(10)
+	email: string;
 
 	@ApiProperty({
 		example: 'password123',

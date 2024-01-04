@@ -1,15 +1,10 @@
 // Nest dependencies
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 // Other dependencies
-import * as jwt from 'jsonwebtoken';
-import { createReadStream } from 'fs';
 
 // Local files
-import { configService } from 'src/shared/Services/config.service';
-import { UserRepository } from 'src/shared/Repositories/user.repository';
 import { NoteRepository } from 'src/shared/Repositories/note.repository';
-import { UserEntity } from 'src/shared/Entities/user.entity';
 import { jwtAddonService } from 'src/shared/Services/jwt-manipulation.service';
 import { JWT_USER_ID } from 'src/shared/Constant';
 import { ProfileRepository } from 'src/shared/Repositories/profile.repository';
@@ -18,14 +13,14 @@ import { ProfileEntity } from 'src/shared/Entities/profile.entity';
 import { PageOptionsDto } from 'src/shared/Dto/page-options.dto';
 import { NoteEntity } from 'src/shared/Entities/note.entity';
 import { AddNoteDto } from '../Dto/add-note.dto';
+import { serializerService } from 'src/shared/Services/serializer.service';
 
 @Injectable()
 export class UserService {
 	constructor(
-		private readonly userRepository: UserRepository,
 		private readonly noteRepository: NoteRepository,
 		private readonly profileRepository: ProfileRepository,
-	) {}
+	) { }
 
 	//------------------------------ Profile ----------------------------------
 
@@ -35,10 +30,7 @@ export class UserService {
 
 	async getOwnProfile(bearer: string): Promise<ProfileEntity> {
 		// extract user_id from 'sub' token
-		const userId = await jwtAddonService.getTokenSubProperty(
-			bearer,
-			JWT_USER_ID,
-		);
+		const userId = await jwtAddonService.getTokenSubProperty(bearer, JWT_USER_ID);
 
 		return this.getProfile(userId);
 	}
@@ -48,12 +40,13 @@ export class UserService {
 		dto: UpdateProfileDto,
 	): Promise<ProfileEntity> {
 		// extract user_id from 'sub' token
-		const userId = await jwtAddonService.getTokenSubProperty(
-			bearer,
-			JWT_USER_ID,
-		);
+		const userId = await jwtAddonService.getTokenSubProperty(bearer, JWT_USER_ID);
 
-		return this.profileRepository.addOrCreateNew(userId, dto);
+		const profile = await this.profileRepository.addOrCreateNew(userId, dto);
+
+		await serializerService.deleteProperties(profile, ['image_buffer', 'image_size', 'image_name']);
+
+		return profile;
 	}
 
 	//------------------------------ Notes ----------------------------------
@@ -67,10 +60,7 @@ export class UserService {
 
 	async addNote(bearer: string, dto: AddNoteDto): Promise<NoteEntity> {
 		// extract user_id from 'sub' token
-		const userId = await jwtAddonService.getTokenSubProperty(
-			bearer,
-			JWT_USER_ID,
-		);
+		const userId = await jwtAddonService.getTokenSubProperty(bearer, JWT_USER_ID);
 
 		return this.noteRepository.addNew(userId, dto);
 	}
