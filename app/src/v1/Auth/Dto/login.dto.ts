@@ -1,6 +1,6 @@
 // Nest dependencies
-import { ApiProperty } from "@nestjs/swagger";
-import { Transform, Type } from "class-transformer";
+import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 
 // Other dependencies
 import {
@@ -9,8 +9,8 @@ import {
 	IsString,
 	Length,
 	MinLength,
-	NotContains
-} from "class-validator";
+	NotContains,
+} from 'class-validator';
 
 export class LoginDto {
 	@ApiProperty({
@@ -22,7 +22,7 @@ export class LoginDto {
 	@IsNotEmpty()
 	@MinLength(3)
 	@NotContains(' ')
-	username: string
+	username: string;
 
 	@ApiProperty({
 		example: 'password123',
@@ -33,5 +33,5 @@ export class LoginDto {
 	@IsNotEmpty()
 	@NotContains(' ')
 	@Length(5, 100)
-	password: string
+	password: string;
 }

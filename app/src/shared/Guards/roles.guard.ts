@@ -11,10 +11,7 @@ export class RolesGuard implements CanActivate {
 	constructor(private readonly reflector: Reflector) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
-		const role = this.reflector.get<number>(
-			ROLE,
-			context.getHandler(),
-		);
+		const role = this.reflector.get<number>(ROLE, context.getHandler());
 
 		// for route without @Role, allow all
 		if (role === undefined) return true;
@@ -27,6 +24,6 @@ export class RolesGuard implements CanActivate {
 		);
 
 		// role of higher tier allow for lower tier route
-		return (userRole >= role);
+		return userRole >= role;
 	}
 }

@@ -25,8 +25,12 @@ export class SessionTokenEntity {
 	@Column({ type: 'timestamptz', precision: 3, nullable: true })
 	last_use_at: Date;
 
-	@CreateDateColumn({ type: 'timestamptz', precision: 3, default: () => 'CURRENT_TIMESTAMP(3)' })
-	created_at: Date
+	@CreateDateColumn({
+		type: 'timestamptz',
+		precision: 3,
+		default: () => 'CURRENT_TIMESTAMP(3)',
+	})
+	created_at: Date;
 
 	//--------------------  Relationship  --------------------
 

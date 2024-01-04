@@ -1,6 +1,6 @@
 // Nest dependencies
-import { ApiProperty } from "@nestjs/swagger";
-import { Transform, Type } from "class-transformer";
+import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 
 // Other dependencies
 import {
@@ -9,27 +9,27 @@ import {
 	IsOptional,
 	IsString,
 	Length,
-	ValidateNested
-} from "class-validator";
+	ValidateNested,
+} from 'class-validator';
 
 // local files
 
 export class AddNoteDto {
-    @ApiProperty({
+	@ApiProperty({
 		example: 'My Title.',
 	})
 	@Type(() => String)
 	@IsString()
 	@IsNotEmpty()
 	@Length(5, 100)
-    title: string
+	title: string;
 
-    @ApiProperty({
+	@ApiProperty({
 		example: 'This is my note.',
 	})
 	@Type(() => String)
 	@IsString()
 	@IsNotEmpty()
 	@Length(5, 300)
-    description: string
+	description: string;
 }

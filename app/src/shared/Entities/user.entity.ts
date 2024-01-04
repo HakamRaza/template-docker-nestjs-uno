@@ -8,7 +8,7 @@ import {
 	UpdateDateColumn,
 	BeforeInsert,
 } from 'typeorm';
-import * as argon2 from 'argon2'
+import * as argon2 from 'argon2';
 
 // Local files
 import { ProfileEntity } from './profile.entity';
@@ -33,7 +33,7 @@ export class UserEntity {
 	password: string;
 
 	@Column({ type: 'enum', enum: Object.values(RolesEnum) })
-	role: RolesEnum
+	role: RolesEnum;
 
 	@Column({ type: 'boolean', default: false })
 	is_banned: boolean;
@@ -42,24 +42,24 @@ export class UserEntity {
 	last_login: Date;
 
 	@CreateDateColumn('date')
-	created_at: Date
+	created_at: Date;
 
 	@UpdateDateColumn('date')
-	updated_at: Date
+	updated_at: Date;
 
 	@BeforeInsert()
 	async hashPassword() {
-		this.password = await argon2.hash(this.password)
+		this.password = await argon2.hash(this.password);
 	}
 
-	//--------------------  Relationship  -------------------- 
+	//--------------------  Relationship  --------------------
 
 	@OneToOne(() => ProfileEntity, (profile) => profile.userData)
 	profileData?: ProfileEntity;
 
 	@OneToMany(() => NoteEntity, (note) => note.userData)
 	noteData?: NoteEntity[];
-	
+
 	@OneToOne(() => SessionTokenEntity, (session) => session.userData)
 	sessionTokenData?: SessionTokenEntity;
 

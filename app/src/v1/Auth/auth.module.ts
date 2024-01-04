@@ -1,5 +1,5 @@
 // Nest dependencies
-import { APP_GUARD } from '@nestjs/core'
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
@@ -17,27 +17,27 @@ import { MailService } from 'src/shared/Services/mail.service';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([
-			UserRepository,
-		]),
+		TypeOrmModule.forFeature([UserRepository]),
 		PassportModule.register({ defaultStrategy: 'jwt' }), // Authentication
 		JwtModule.registerAsync({
 			useFactory: () => {
 				return {
 					secret: configService.getEnv('JWT_SECRET_FOR_ACCESS_TOKEN'),
 					signOptions: {
-						...({ expiresIn: configService.getEnv('JWT_EXPIRATION_TIME') }),
+						...{
+							expiresIn: configService.getEnv(
+								'JWT_EXPIRATION_TIME',
+							),
+						},
 					},
-				}
+				};
 			},
 		}), // Authentication
 		BullModule.registerQueue({
 			name: 'email-queue',
 		}),
 	],
-	controllers: [
-		AuthController
-	],
+	controllers: [AuthController],
 	providers: [
 		AuthService,
 		MailService,
@@ -45,8 +45,8 @@ import { MailService } from 'src/shared/Services/mail.service';
 		JwtStrategy, // Authentication
 		{
 			provide: APP_GUARD,
-			useClass: RolesGuard
-		} // Authorization (Based on Role)
+			useClass: RolesGuard,
+		}, // Authorization (Based on Role)
 	],
 })
-export class AuthModule { }
+export class AuthModule {}

@@ -3,15 +3,15 @@ import {
 	Injectable,
 	BadRequestException,
 	ForbiddenException,
-	ConflictException
+	ConflictException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt'
+import { JwtService } from '@nestjs/jwt';
 import { ApiTags } from '@nestjs/swagger';
 import { InjectQueue } from '@nestjs/bull';
 
 // Other dependencies
 import { randomBytes } from 'crypto';
-import * as argon2 from 'argon2'
+import * as argon2 from 'argon2';
 import { Queue } from 'bull';
 
 // Local files
@@ -25,7 +25,6 @@ import { JwtPayloadBody } from 'src/shared/Types/jwt-payload-body.type';
 import { jwtAddonService } from 'src/shared/Services/jwt-manipulation.service';
 import { JWT_ROLE, JWT_SESSION_TOKEN, JWT_USER_ID } from 'src/shared/Constant';
 
-
 @ApiTags('v1/auth')
 @Injectable()
 export class AuthService {
@@ -33,19 +32,20 @@ export class AuthService {
 		private readonly userRepository: UserRepository,
 		private readonly sessionTokenRepository: SessionTokenRepository,
 		private readonly jwtService: JwtService,
-		@InjectQueue('email-queue') private readonly emailQueue: Queue
+		@InjectQueue('email-queue') private readonly emailQueue: Queue,
 	) {}
 
 	async signup(dto: RegisterDto): Promise<UserEntity> {
 		// check email exist or username exist
 		const isExist = await this.userRepository.isEmailExist(dto.email);
-		if (isExist) throw new ConflictException('Email or username is unavailable.')
+		if (isExist)
+			throw new ConflictException('Email or username is unavailable.');
 
 		// register new user
 		const user = await this.userRepository.addNew(dto);
-		
+
 		await this.emailQueue.add('sendWelcomeMail', {
-			to: user.email
+			to: user.email,
 		});
 
 		return user;
@@ -55,26 +55,32 @@ export class AuthService {
 		// find user
 		const user = await this.userRepository.findUserByEmail(dto.username);
 		// check user is banned
-		if (user.is_banned) throw new ForbiddenException('Account has been banned. Please contact support for further details.')
+		if (user.is_banned)
+			throw new ForbiddenException(
+				'Account has been banned. Please contact support for further details.',
+			);
 
 		// check password passed
-		let isVerified = await argon2.verify(user.password, dto.password)
-		if (!isVerified) throw new BadRequestException('User could not found by given credentials.')
+		const isVerified = await argon2.verify(user.password, dto.password);
+		if (!isVerified)
+			throw new BadRequestException(
+				'User could not found by given credentials.',
+			);
 
 		// generate access token
 		const jwt: JwtPayloadBody = {
-			nbf: Math.floor(Date.now() / 1000) + (60 * 60),
+			nbf: Math.floor(Date.now() / 1000) + 60 * 60,
 			[JWT_ROLE]: user.role,
 			[JWT_USER_ID]: '' + user.id,
 			[JWT_SESSION_TOKEN]: randomBytes(10).toString('hex'),
-		}
-		
+		};
+
 		const access_token = this.jwtService.sign(jwt);
-		
+
 		// record token
-		await this.sessionTokenRepository.assignSession(jwt) // save token to DB
-		
-		return [ user, access_token ]
+		await this.sessionTokenRepository.assignSession(jwt); // save token to DB
+
+		return [user, access_token];
 	}
 
 	async logout(bearer: string): Promise<void> {
@@ -82,6 +88,6 @@ export class AuthService {
 		const userId = jwtAddonService.getTokenSubProperty(bearer, JWT_USER_ID);
 
 		// delete session tokens
-		return this.sessionTokenRepository.removeAllToken(userId)
+		return this.sessionTokenRepository.removeAllToken(userId);
 	}
 }

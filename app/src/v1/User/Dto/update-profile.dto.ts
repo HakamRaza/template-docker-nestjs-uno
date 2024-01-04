@@ -1,6 +1,6 @@
 // Nest dependencies
-import { ApiPropertyOptional } from "@nestjs/swagger";
-import { Transform, Type } from "class-transformer";
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 
 // Other dependencies
 import {
@@ -9,14 +9,13 @@ import {
 	IsOptional,
 	IsString,
 	Length,
-	ValidateNested
-} from "class-validator";
+	ValidateNested,
+} from 'class-validator';
 
 // local files
-import { FileAttachmentDto } from "src/shared/Dto/file-attachment.dto";
+import { FileAttachmentDto } from 'src/shared/Dto/file-attachment.dto';
 
 export class UpdateProfileDto {
-
 	@ApiPropertyOptional({
 		example: 'Hoo Lew Key',
 	})
@@ -25,7 +24,7 @@ export class UpdateProfileDto {
 	@Type(() => String)
 	@IsString()
 	@Length(5, 200)
-    fullname: string;
+	fullname: string;
 
 	@ApiPropertyOptional({
 		example: 'Bukit Bintang, 57000, KL',
@@ -35,11 +34,11 @@ export class UpdateProfileDto {
 	@Type(() => String)
 	@IsString()
 	@Length(5, 200)
-    address: string;
+	address: string;
 
 	@ApiPropertyOptional({
 		required: true,
-		example: {}
+		example: {},
 	})
 	@IsOptional()
 	@IsNotEmptyObject()

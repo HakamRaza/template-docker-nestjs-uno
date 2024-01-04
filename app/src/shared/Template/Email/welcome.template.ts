@@ -1,7 +1,7 @@
-import { WelcomeEmailBody } from "src/shared/Dto/mail.type";
+import { WelcomeEmailBody } from 'src/shared/Dto/mail.type';
 
 const WelcomeTemplate = (dto: WelcomeEmailBody) => {
-    const html = `
+	const html = `
     <!DOCTYPE html>
     <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
         <head>
@@ -32,17 +32,17 @@ const WelcomeTemplate = (dto: WelcomeEmailBody) => {
         <body/>
     </html>`;
 
-    const text = `
+	const text = `
         Hi ${dto.to}, 
         
         Welcome.
         Login now at: "${dto.websiteUrl}"
     `;
 
-    return {
-        html: html,
-        text: text,
-    };
+	return {
+		html: html,
+		text: text,
+	};
 };
 
 export default WelcomeTemplate;

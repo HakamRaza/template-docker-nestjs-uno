@@ -18,16 +18,16 @@ export class UserRepository extends Repository<UserEntity> {
 		super(UserEntity, dataSource.createEntityManager());
 	}
 
-	async isEmailExist(email:string): Promise<boolean> {
+	async isEmailExist(email: string): Promise<boolean> {
 		try {
-			return await this.exist({ 
-				where: { 
-					email: email
-				}
+			return await this.exist({
+				where: {
+					email: email,
+				},
 			});
 		} catch (error) {
 			console.error(error);
-			throw new BadRequestException()
+			throw new BadRequestException();
 		}
 	}
 
@@ -36,13 +36,13 @@ export class UserRepository extends Repository<UserEntity> {
 			const newUser: UserEntity = this.create({
 				email: dto.email,
 				password: dto.password,
-				role: dto.role
-			})
+				role: dto.role,
+			});
 
 			return await this.save(newUser);
 		} catch (error) {
 			console.error(error);
-			throw new BadRequestException('Failed to register user')
+			throw new BadRequestException('Failed to register user');
 		}
 	}
 

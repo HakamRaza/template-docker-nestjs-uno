@@ -21,7 +21,7 @@ export const versionRoutes: Routes = [
 			{
 				path: '/user',
 				module: UserModule,
-			}
+			},
 		],
 	},
 ];

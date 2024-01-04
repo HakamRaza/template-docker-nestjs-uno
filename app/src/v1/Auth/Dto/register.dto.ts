@@ -1,6 +1,6 @@
 // Nest dependencies
-import { ApiProperty } from "@nestjs/swagger";
-import { Transform, Type } from "class-transformer";
+import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 
 // Other dependencies
 import {
@@ -12,11 +12,11 @@ import {
 	IsString,
 	Length,
 	MinLength,
-	NotContains
-} from "class-validator";
+	NotContains,
+} from 'class-validator';
 
 // local files
-import { RolesEnum } from "src/shared/Enums/roles.enums";
+import { RolesEnum } from 'src/shared/Enums/roles.enums';
 
 export class RegisterDto {
 	@ApiProperty({
@@ -27,7 +27,7 @@ export class RegisterDto {
 	@IsEmail()
 	@IsNotEmpty()
 	@MinLength(10)
-    email: string;
+	email: string;
 
 	@ApiProperty({
 		example: 'password123',
@@ -38,7 +38,7 @@ export class RegisterDto {
 	@IsNotEmpty()
 	@NotContains(' ')
 	@Length(5, 100)
-    password: string;
+	password: string;
 
 	@ApiProperty({
 		example: Object.values(RolesEnum)[0],

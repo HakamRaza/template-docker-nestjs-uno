@@ -26,7 +26,7 @@ export class SerializerService {
 	// Remove identified unnecessary details from query
 	public async deleteProperties(
 		data: object,
-		properties: string[]
+		properties: string[],
 	): Promise<object> {
 		for await (const property of properties) {
 			delete data[property];
@@ -36,7 +36,7 @@ export class SerializerService {
 	}
 
 	public assignPropNameToPropValue(
-		data: Array<{ [key: string]: any; name: string; value: any }>
+		data: Array<{ [key: string]: any; name: string; value: any }>,
 	): Object {
 		const json = {};
 
@@ -51,7 +51,7 @@ export class SerializerService {
 	public serializeResponse(
 		type: string,
 		data: object,
-		id?: number
+		id?: number,
 	): ISerializeResponse {
 		return {
 			type,
@@ -66,7 +66,7 @@ export class SerializerService {
 		data: Array<object> | Object,
 		pageOptionsDto: PageOptionsDto,
 		itemCount: number,
-		id?: number
+		id?: number,
 	): ISerializeResponse {
 		const page = Number(pageOptionsDto.page);
 		const take = Number(pageOptionsDto.take);

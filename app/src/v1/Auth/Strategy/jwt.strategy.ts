@@ -31,9 +31,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	}
 
 	async validate(dto: JwtPayloadBody): Promise<any> {
-		const sessionToken = await this.sessionTokenRepository.getUserSession(dto); // check session validity with DB
+		const sessionToken = await this.sessionTokenRepository.getUserSession(
+			dto,
+		); // check session validity with DB
 
-		if (sessionToken.userData.is_banned) throw new UnauthorizedException('Account has been disabled. Please contact administrator.');
+		if (sessionToken.userData.is_banned)
+			throw new UnauthorizedException(
+				'Account has been disabled. Please contact administrator.',
+			);
 
 		await this.sessionTokenRepository.updateCurrentSession(dto); // updated last used at
 

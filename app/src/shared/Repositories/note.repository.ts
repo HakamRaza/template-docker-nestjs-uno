@@ -20,19 +20,22 @@ export class NoteRepository extends Repository<NoteEntity> {
 		super(NoteEntity, dataSource.createEntityManager());
 	}
 
-	async findNotes(query: PageOptionsDto, fetchAll: boolean = false): Promise<[NoteEntity[], number]> {
+	async findNotes(
+		query: PageOptionsDto,
+		fetchAll = false,
+	): Promise<[NoteEntity[], number]> {
 		try {
 			return await this.findAndCount({
 				select: {
 					userData: {
 						id: true,
 						email: true,
-					}
+					},
 				},
 				where: {
 					userData: {
 						is_banned: false,
-					}
+					},
 				},
 				relations: {
 					userData: true,
@@ -40,29 +43,26 @@ export class NoteRepository extends Repository<NoteEntity> {
 				order: {
 					updated_at: query.order,
 				},
-				...(fetchAll
-					? {}
-					: { skip: query.skip, take: query.take }
-				)
-			})
+				...(fetchAll ? {} : { skip: query.skip, take: query.take }),
+			});
 		} catch (error) {
 			console.error(error);
-			throw new BadRequestException('Failed to fetch notes')
+			throw new BadRequestException('Failed to fetch notes');
 		}
 	}
 
-	async addNew(userId: number, dto: AddNoteDto): Promise<NoteEntity> {		
+	async addNew(userId: number, dto: AddNoteDto): Promise<NoteEntity> {
 		try {
 			const newNote: NoteEntity = this.create({
 				user_id: userId,
 				title: dto.title,
-				description: dto.description
+				description: dto.description,
 			});
 
 			return await this.save(newNote);
 		} catch (error) {
 			console.error(error);
-			throw new BadRequestException('Failed to add note')
+			throw new BadRequestException('Failed to add note');
 		}
 	}
 

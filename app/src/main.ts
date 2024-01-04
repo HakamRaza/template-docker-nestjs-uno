@@ -1,7 +1,10 @@
 // Nest dependencies
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import {NestFastifyApplication, FastifyAdapter} from '@nestjs/platform-fastify';
+import {
+	NestFastifyApplication,
+	FastifyAdapter,
+} from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // Other dependencies
@@ -46,7 +49,7 @@ async function bootstrap() {
 	// initialise app
 	const app = await NestFactory.create<NestFastifyApplication>(
 		AppModule,
-		fastifyAdapter
+		fastifyAdapter,
 	);
 
 	// middleware process of file uploads multipart
@@ -72,7 +75,7 @@ async function bootstrap() {
 				scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
 			},
 		},
-	}) 
+	});
 	app.register(compression); // Initialize fastify-compress to better handle high-level traffic
 	app.register(fastifyCookie); // Initialize fastify-cookie for cookie manipulation
 	app.register(fastifyMultipart, {
@@ -80,7 +83,7 @@ async function bootstrap() {
 		onFile,
 		limits: {
 			fileSize: 10000000, // For multipart forms, the max file size in bytes, 10 MB
-			files: 3, 			   // Max number of file fields
+			files: 3, // Max number of file fields
 			// fieldNameSize: 100, // Max field name size in bytes
 			// fieldSize: 100,     // Max field value size in bytes
 			// fields: 10,         // Max number of non-file fields
@@ -98,15 +101,19 @@ async function bootstrap() {
 			.addBearerAuth()
 			.build();
 		const document = SwaggerModule.createDocument(app, options);
-		SwaggerModule.setup('/' + configService.getEnv('SWAGGER_ACCESS_PATH'), app, document); // setup swagger docs and path
+		SwaggerModule.setup(
+			'/' + configService.getEnv('SWAGGER_ACCESS_PATH'),
+			app,
+			document,
+		); // setup swagger docs and path
 	} else {
 		// production setup, example setting sentry
 	}
 
 	app.listen(
 		Number(configService.getEnv('APP_PORT')) +
-		Number(configService.getEnv('INSTANCE_ID') || 0),
-		'0.0.0.0'
+			Number(configService.getEnv('INSTANCE_ID') || 0),
+		'0.0.0.0',
 	);
 }
 

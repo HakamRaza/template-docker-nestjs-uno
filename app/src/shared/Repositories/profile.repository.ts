@@ -27,7 +27,7 @@ export class ProfileRepository extends Repository<ProfileEntity> {
 					fullname: true,
 					address: true,
 				},
-				where: { user_id: userId }
+				where: { user_id: userId },
 			});
 		} catch (error) {
 			console.error(error);
@@ -35,14 +35,20 @@ export class ProfileRepository extends Repository<ProfileEntity> {
 		}
 	}
 
-	async addOrCreateNew(userId: number, dto: UpdateProfileDto): Promise<ProfileEntity> {
-		const exist = this.exist({ 
+	async addOrCreateNew(
+		userId: number,
+		dto: UpdateProfileDto,
+	): Promise<ProfileEntity> {
+		const exist = this.exist({
 			where: {
-				user_id: userId
-			}
+				user_id: userId,
+			},
 		});
 
-		if (!exist && !dto.fullname) throw new BadRequestException('Full name is needed to create profile.');
+		if (!exist && !dto.fullname)
+			throw new BadRequestException(
+				'Full name is needed to create profile.',
+			);
 
 		try {
 			const profile: ProfileEntity = this.create({
@@ -52,12 +58,12 @@ export class ProfileRepository extends Repository<ProfileEntity> {
 				image_size: dto.imagefile ? dto.imagefile.filesize : null,
 				image_buffer: dto.imagefile ? dto.imagefile.decoded : null,
 				address: dto.address || null,
-			})
+			});
 
 			return await this.save(profile);
 		} catch (error) {
 			console.error(error);
-			throw new BadRequestException('Failed to save profile')
+			throw new BadRequestException('Failed to save profile');
 		}
 	}
 }

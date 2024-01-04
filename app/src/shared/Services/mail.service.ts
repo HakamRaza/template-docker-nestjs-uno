@@ -23,7 +23,7 @@ export class MailService {
 	private sendEmail(bodyData: EmailFullBody): Promise<void> {
 		return new Promise(async (resolve, reject) => {
 			const transporter = nodemailer.createTransport(
-				configService.getMailConfig()
+				configService.getMailConfig(),
 			);
 
 			transporter.sendMail(bodyData, (error) => {
@@ -33,14 +33,14 @@ export class MailService {
 		});
 	}
 
-	public sendWelcomeMail(userEmail: string, ): Promise<void> {
+	public sendWelcomeMail(userEmail: string): Promise<void> {
 		const domain = configService.getEnv('APP_DOMAIN');
 
 		const body: WelcomeEmailBody = {
 			from: 'noreply@' + domain,
 			to: userEmail,
-			websiteUrl: 'http://' + domain + '/login'
-		}
+			websiteUrl: 'http://' + domain + '/login',
+		};
 
 		const template = WelcomeTemplate(body);
 		const mailOptions: EmailFullBody = {

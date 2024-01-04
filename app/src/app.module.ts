@@ -6,7 +6,10 @@ import { BullModule } from '@nestjs/bull';
 
 // Other dependencies
 import { DataSource } from 'typeorm';
-import { addTransactionalDataSource, getDataSourceByName } from 'typeorm-transactional';
+import {
+	addTransactionalDataSource,
+	getDataSourceByName,
+} from 'typeorm-transactional';
 
 // Local files
 import { versionRoutes } from 'src/version.routes';
@@ -21,17 +24,20 @@ import { V1Module } from './v1/v1.module';
 			limiter: {
 				max: 4,
 				duration: 6000,
-			}
+			},
 		}),
 		TypeOrmModule.forRootAsync({
 			useFactory: () => configService.getTypeOrmConfig(),
 			dataSourceFactory: async (options) => {
 				if (!options) throw new Error('Invalid options passed');
-				return getDataSourceByName('default') || addTransactionalDataSource(new DataSource(options));
-			  },
+				return (
+					getDataSourceByName('default') ||
+					addTransactionalDataSource(new DataSource(options))
+				);
+			},
 		}),
 		RouterModule.register(versionRoutes),
 		V1Module,
-	]
+	],
 })
 export class AppModule {}

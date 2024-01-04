@@ -39,7 +39,7 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 				relations: ['userData'],
 			});
 		} catch (error) {
-			console.error(error)
+			console.error(error);
 			throw new UnauthorizedException('Invalid session token');
 		}
 	}
@@ -48,10 +48,10 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 		try {
 			await this.update(
 				{ token: dto.jti, user_id: parseInt(dto.sub) },
-				{ last_use_at: () => 'NOW()' }
+				{ last_use_at: () => 'NOW()' },
 			);
 		} catch (error) {
-			console.error(error)
+			console.error(error);
 			throw new UnprocessableEntityException('Failed to update session');
 		}
 	}
@@ -59,7 +59,6 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 	async removeAllToken(userId: number): Promise<void> {
 		try {
 			await this.delete({ user_id: userId }); // remove all old token
-
 		} catch (error) {
 			console.error(error);
 			throw new UnprocessableEntityException('Failed to remove tokens.');
@@ -75,7 +74,7 @@ export class SessionTokenRepository extends Repository<SessionTokenEntity> {
 			await this.removeAllToken(parseInt(dto.sub));
 			await this.addToken(parseInt(dto.sub), dto.jti);
 		} catch (error) {
-			console.error(error)
+			console.error(error);
 			throw new BadRequestException('Failed to update session');
 		}
 	}

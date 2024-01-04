@@ -3,10 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 // Other dependencies
 import { Type } from 'class-transformer';
-import { 
-	IsNotEmpty,
-	IsInt
-} from 'class-validator';
+import { IsNotEmpty, IsInt } from 'class-validator';
 
 export class SingleIDDto {
 	@ApiProperty({

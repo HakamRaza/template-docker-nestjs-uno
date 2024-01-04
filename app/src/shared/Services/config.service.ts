@@ -20,9 +20,7 @@ export class ConfigService {
 	}
 
 	public isProduction(): boolean {
-		return (this.getEnv('MODE') + '')
-			.toLowerCase()
-			.startsWith('prod');
+		return (this.getEnv('MODE') + '').toLowerCase().startsWith('prod');
 	}
 
 	public getTypeOrmConfig(): TypeOrmModuleOptions {
@@ -41,7 +39,7 @@ export class ConfigService {
 				SessionTokenEntity,
 				UserEntity,
 			],
-			synchronize: ! this.isProduction(),
+			synchronize: !this.isProduction(),
 			ssl: false,
 		};
 	}
@@ -51,7 +49,7 @@ export class ConfigService {
 			service: configService.getEnv('SMTP_SERVICE'),
 			host: configService.getEnv('SMTP_HOST'),
 			port: configService.getEnv('SMTP_PORT'),
-			secure: (configService.getEnv('SMTP_SERVICE') !== 'mailtrap'),
+			secure: configService.getEnv('SMTP_SERVICE') !== 'mailtrap',
 			auth: {
 				user: configService.getEnv('SMTP_USER'),
 				pass: configService.getEnv('SMTP_PASSWORD'),
