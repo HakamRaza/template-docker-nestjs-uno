@@ -1,0 +1,127 @@
+version: "3.9"
+
+services:
+
+  # ------------------------------------------------------------
+  # PostgreSQL - database
+  # ------------------------------------------------------------
+  app_pgdb:
+    # set name for your container, if not random name will be assigned
+    container_name: app_pgdb
+    # using pgsql version 15 alpine
+    image: postgres:15-alpine
+    # load .env properties from .env file
+    env_file:
+      - .env
+    # bind PC localhost:5432 to Docker localhost:5432 based on .env
+    ports: 
+      - ${DOCKER_POSTGRES_PORT}:${POSTGRES_PORT}
+    # restart container if fail
+    restart: unless-stopped
+    # bind volume to docker 'pgdata' folder to avoid data loss on next run
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # connect to 'backend' docker network
+    networks:
+      - backend
+
+
+  # ------------------------------------------------------------
+  # PGAdmin - database client
+  # ------------------------------------------------------------
+  app_pgadmin:
+    container_name: app_pgadmin
+    image: dpage/pgadmin4
+    # load .env properties from .env file '.env'
+    # since .env properties are commonly shared between each services, use same key and file name
+    env_file:
+      - .env
+    # bind PC localhost:port to Docker localhost:80, open browser http://localhost:8080
+    ports:
+      - ${DOCKER_PGADMIN_PORT}:80
+    # bind volume to docker 'pgadmin' folder to avoid data loss on next run
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
+    networks:
+      - backend
+    # wait for database to initialize then run
+    depends_on:
+      - app_pgdb
+
+
+  # ------------------------------------------------------------
+  # Redis - for queue, or caching
+  # ------------------------------------------------------------
+  app_redis:
+    container_name: app_redis
+    image: redis:7.2-alpine
+    hostname: app_redis
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - ${DOCKER_REDIS_PORT}:${REDIS_PORT}
+    volumes:
+      - redisdata:/data
+    # Apply custom arguments to redis startup and set password from .env
+    command: /bin/sh -c "redis-server --save 20 1 --loglevel warning --requirepass $$REDIS_PASSWORD"
+    networks:
+      - backend
+
+
+  # ------------------------------------------------------------
+  # NestJS App - this service depending on Dockefile set up
+  # ------------------------------------------------------------
+  app_api:
+    container_name: app_api
+    # define location and name of Dockerfile
+    build:
+      context: ./
+      dockerfile: Dockerfile.DEV
+    env_file:
+      - .env
+    # port you expose or set for your app. Same as Dockerfile
+    # bind PC localhost:3000 to Docker localhost:3000, open browser http://localhost:3000
+    ports:
+      - ${DOCKER_APP_PORT}:${APP_PORT}
+    volumes:
+      # to avoid nodemodules built in the image replace due to above, (./app has no node_modules!), move image node_modules to 'anynomous' folder
+      - nodemodules:/var/www/app/node_modules
+      # to enable JS hot reloading, it mount image '/var/www/app' working directory (defined in Dockerfile) with PC './app' directory
+      - ./app:/var/www/app
+    restart: unless-stopped
+    # command to execute when container run
+    command: npm run start:dev
+    networks:
+      - backend
+    # wait for db and redis initialize before run
+    depends_on:
+      - app_pgdb
+      - app_redis
+
+
+# Define / create a network
+networks:
+    # network name 'backend' use for services
+    backend:
+        # network name for Docker
+        name: network-backend
+        # 'bridge' type define an isolated localhost network inside 'this' Docker
+        driver: bridge
+
+
+# Define / create a Docker volume (folder)
+volumes:
+  # volume name 'pgdata' use for pgdb service
+  pgdata:
+    # volume name for Docker
+    name: app-pgdata
+  # volume name 'pgdata' use for pgadmin service
+  pgadmindata:
+    name: app-pgadmin
+  # volume name 'pgdata' use for app service
+  nodemodules:
+    name: app-nodemodules
+  # volume for redis data
+  redisdata:
+    name: app-redis
