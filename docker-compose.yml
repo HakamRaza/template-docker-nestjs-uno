@@ -13,9 +13,10 @@ services:
     # load .env properties from .env file
     env_file:
       - .env
-    # bind PC localhost:5432 to Docker localhost:5432
+    # bind PC localhost:5432 to Docker localhost:5432 based on .env
     ports: 
       - ${DOCKER_POSTGRES_PORT}:${POSTGRES_PORT}
+    # restart container if fail
     restart: unless-stopped
     # bind volume to docker 'pgdata' folder to avoid data loss on next run
     volumes:
@@ -49,6 +50,26 @@ services:
 
 
   # ------------------------------------------------------------
+  # Redis - for queue, or caching
+  # ------------------------------------------------------------
+  app_redis:
+    container_name: app_redis
+    image: redis:7.2-alpine
+    hostname: app_redis
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - ${DOCKER_REDIS_PORT}:${REDIS_PORT}
+    volumes:
+      - redisdata:/data
+    # Apply custom arguments to redis startup and set password from .env
+    command: /bin/sh -c "redis-server --save 20 1 --loglevel warning --requirepass $$REDIS_PASSWORD"
+    networks:
+      - backend
+
+
+  # ------------------------------------------------------------
   # NestJS App - this service depending on Dockefile set up
   # ------------------------------------------------------------
   app_api:
@@ -64,37 +85,19 @@ services:
     ports:
       - ${DOCKER_APP_PORT}:${APP_PORT}
     volumes:
-      # to enable JS hot reloading, it mount image '/var/www/app' working directory (defined in Dockerfile) with PC './app' directory
-      - ./app:/var/www/app
       # to avoid nodemodules built in the image replace due to above, (./app has no node_modules!), move image node_modules to 'anynomous' folder
       - nodemodules:/var/www/app/node_modules
+      # to enable JS hot reloading, it mount image '/var/www/app' working directory (defined in Dockerfile) with PC './app' directory
+      - ./app:/var/www/app
     restart: unless-stopped
     # command to execute when container run
     command: npm run start:dev
     networks:
       - backend
+    # wait for db and redis initialize before run
     depends_on:
       - app_pgdb
-
-
-  # ------------------------------------------------------------
-  # Redis - for queue, or caching
-  # ------------------------------------------------------------
-  app_redis:
-    container_name: app_redis
-    image: redis:7.2-alpine
-    hostname: app_redis
-    env_file:
-      - .env
-    restart: unless-stopped
-    ports:
-      - ${DOCKER_REDIS_PORT}:${REDIS_PORT}
-    volumes:
-      - redisdata:/data
-    # Apply custom arguments to redis startup
-    command: /bin/sh -c "redis-server --save 20 1 --loglevel warning --requirepass $$REDIS_PASSWORD"
-    networks:
-      - backend
+      - app_redis
 
 
 # Define / create a network
