@@ -91,6 +91,16 @@ Run the following commands to build and run the images:
  ```
  localhost:8080
  ```
+ > Using PgAdmin :
+  <div align="center">
+      <img src="https://github.com/HakamRaza/template-docker-nestjs-uno/assets/65484304/0f7d2cfb-77d6-4948-b2f0-a49cb527f53a" width="400px" height="300px"> 
+      <img src="https://github.com/HakamRaza/template-docker-nestjs-uno/assets/65484304/6f7522cf-2433-48d0-987d-a2dc3ff8b1a8" width="400px" height="300px"> 
+      <img src="https://github.com/HakamRaza/template-docker-nestjs-uno/assets/65484304/070ad8e8-3e60-473e-a306-3b979fb944d3" width="400px" height="300px"> 
+      <img src="https://github.com/HakamRaza/template-docker-nestjs-uno/assets/65484304/8ae0cbea-96de-430b-8476-0a4b9e2851b9" width="400px" height="300px"> 
+      <img src="https://github.com/HakamRaza/template-docker-nestjs-uno/assets/65484304/2bdff42e-18c7-4378-839c-475937d4a695" width="400px" height="300px"> 
+  </div>
+
+
 ## Testing
 - schema migration will be done auto when not set `MODE` to `PROD`
 - open swagger docs and begin using sample API:
