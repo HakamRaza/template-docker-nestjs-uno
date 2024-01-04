@@ -5,7 +5,7 @@ import { PageOptionsDto } from '../Dto/page-options.dto';
  */
 export declare interface ISerializeResponse {
 	type: string;
-	id?: string;
+	id?: number;
 	data: {
 		[key: string]: any;
 	};
@@ -51,7 +51,7 @@ export class SerializerService {
 	public serializeResponse(
 		type: string,
 		data: object,
-		id?: string
+		id?: number
 	): ISerializeResponse {
 		return {
 			type,
@@ -66,7 +66,7 @@ export class SerializerService {
 		data: Array<object> | Object,
 		pageOptionsDto: PageOptionsDto,
 		itemCount: number,
-		id?: string
+		id?: number
 	): ISerializeResponse {
 		const page = Number(pageOptionsDto.page);
 		const take = Number(pageOptionsDto.take);
