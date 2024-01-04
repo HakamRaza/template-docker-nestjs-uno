@@ -25,10 +25,12 @@
 		"noLib": false,
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
-
 		"strictNullChecks": false,
 		"removeComments": true,
-		"lib": ["dom", "es2019"],
+		"lib": [
+			"dom",
+			"es2019"
+		],
 		"plugins": [
 			{
 				"name": "tslint-language-service"
@@ -42,7 +44,19 @@
 		"resolveJsonModule": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"typeRoots": ["node_modules/@types"]
+		"typeRoots": [
+			"node_modules/@types"
+		]
+	},
+	"watchOptions": {
+		"watchFile": "priorityPollingInterval",
+		"watchDirectory": "dynamicprioritypolling",
+		"fallbackPolling": "dynamicPriority",
+		"synchronousWatchDirectory": true,
+		"excludeDirectories": [
+			"**/node_modules",
+			"dist"
+		]
 	},
 	"exclude": [
 		"coverage/**/*",
