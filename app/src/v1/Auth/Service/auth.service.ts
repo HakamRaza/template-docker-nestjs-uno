@@ -7,10 +7,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt'
 import { ApiTags } from '@nestjs/swagger';
+import { InjectQueue } from '@nestjs/bull';
 
 // Other dependencies
 import { randomBytes } from 'crypto';
 import * as argon2 from 'argon2'
+import { Queue } from 'bull';
 
 // Local files
 import { UserRepository } from 'src/shared/Repositories/user.repository';
@@ -31,7 +33,7 @@ export class AuthService {
 		private readonly userRepository: UserRepository,
 		private readonly sessionTokenRepository: SessionTokenRepository,
 		private readonly jwtService: JwtService,
-		private readonly mailService: MailService,
+		@InjectQueue('email-queue') private readonly emailQueue: Queue
 	) {}
 
 	async signup(dto: RegisterDto): Promise<UserEntity> {
@@ -42,10 +44,8 @@ export class AuthService {
 		// register new user
 		const user = await this.userRepository.addNew(dto);
 		
-		// send welcome mail
-		await this.mailService.sendWelcomeMail(user.email).catch((_err) => {
-			console.error(_err);
-			throw new BadRequestException('SMTP transport failed');
+		await this.emailQueue.add('sendWelcomeMail', {
+			to: user.email
 		});
 
 		return user;

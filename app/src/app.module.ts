@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RouterModule } from '@nestjs/core';
+import { BullModule } from '@nestjs/bull';
 
 // Other dependencies
 import { DataSource } from 'typeorm';
@@ -15,6 +16,13 @@ import { V1Module } from './v1/v1.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
+		BullModule.forRoot({
+			redis: configService.getRedisConfig(),
+			limiter: {
+				max: 4,
+				duration: 6000,
+			}
+		}),
 		TypeOrmModule.forRootAsync({
 			useFactory: () => configService.getTypeOrmConfig(),
 			dataSourceFactory: async (options) => {

@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { BullModule } from '@nestjs/bull';
 
 // Local files
 import { UserRepository } from 'src/shared/Repositories/user.repository';
@@ -30,6 +31,9 @@ import { MailService } from 'src/shared/Services/mail.service';
 				}
 			},
 		}), // Authentication
+		BullModule.registerQueue({
+			name: 'email-queue',
+		}),
 	],
 	controllers: [
 		AuthController
