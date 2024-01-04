@@ -20,12 +20,11 @@ export class UserRepository extends Repository<UserEntity> {
 
 	async isEmailExist(email:string): Promise<boolean> {
 		try {
-			let anyExist = await this.count({ 
+			return await this.exist({ 
 				where: { 
 					email: email
 				}
 			});
-			return (anyExist > 0);
 		} catch (error) {
 			console.error(error);
 			throw new BadRequestException()

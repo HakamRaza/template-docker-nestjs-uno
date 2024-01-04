@@ -5,14 +5,11 @@ import {
     UseGuards,
     Get,
     Post,
-    Patch,
-    Put,
     Param,
     Body,
     Headers,
     Query,
     Res,
-    Req,
     Delete,
     StreamableFile,
 } from '@nestjs/common'
@@ -24,16 +21,14 @@ import { FastifyReply } from 'fastify';
 
 // Local files
 import { UserService } from '../Service/user.service'
-import { UpdateUserDto } from '../Dto/update-user.dto'
-import { ActivateUserDto } from '../Dto/activate-user.dto'
 import { ISerializeResponse, serializerService } from 'src/shared/Services/serializer.service'
 import { Roles } from 'src/shared/Decorators/roles.decorator'
-import { UserBanDto } from '../Dto/user-ban.dto'
 import { JwtAuthGuard } from 'src/shared/Guards/jwt-auth.guard'
-import { SingleUUIDDto } from 'src/v1/Auth/Dto/single-uuid.dto'
+import { SingleIDDto } from 'src/v1/Auth/Dto/single-id.dto'
 import { RolesEnum } from 'src/shared/Enums/roles.enums'
 import { PageOptionsDto } from 'src/shared/Dto/page-options.dto'
 import { StatusOk } from 'src/shared/Types/http.type';
+import { UpdateProfileDto } from '../Dto/update-profile.dto';
 
 @ApiTags('v1/user')
 @Controller()
@@ -48,8 +43,8 @@ export class UsersController {
     async getOwnProfile(
         @Headers('authorization') bearer: string,
     ): Promise<ISerializeResponse> {
-        let user = await this.userService.getOwnProfile(bearer);
-        return serializerService.serializeResponse('user_profile', user);
+        let profile = await this.userService.getOwnProfile(bearer);
+        return serializerService.serializeResponse('user_profile', profile, profile.user_id);
     }
 
     @ApiBearerAuth()
@@ -59,43 +54,44 @@ export class UsersController {
         @Headers('authorization') bearer: string,
         @Body() dto: UpdateProfileDto
     ): Promise<ISerializeResponse> {
-        let user = await this.userService.updateOwnProfile(bearer);
-        return serializerService.serializeResponse('user_profile', user);
+        let profile = await this.userService.updateOrCreateOwnProfile(bearer, dto);
+        return serializerService.serializeResponse('user_profile', profile, profile.user_id);
     }
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @Roles(RolesEnum.admin) // only admin role access
-    @Get('/:uuid/profile')
+    @Get('/:id/profile')
     async getOtherProfile(
-        @Param() param: SingleUUIDDto,
+        @Param() param: SingleIDDto,
     ): Promise<ISerializeResponse> {
-        let user = await this.userService.getProfile(param.uuid);
-        return serializerService.serializeResponse('user_profile', user);
+        let profile = await this.userService.getProfile(param.id);
+        return serializerService.serializeResponse('user_profile', profile, profile.user_id);
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
-    @Roles(RolesEnum.staff) // staff & admin role access
-    @Get('/:uuid/profile/image')
-    async getOtherProfile(
-        @Param() param: SingleUUIDDto,
+    @UseGuards(JwtAuthGuard) // open to anyone who auth'ed
+    @Get('/:id/profile/image')
+    async downloadProfileImage(
+        @Param() param: SingleIDDto,
         @Res({ passthrough: true }) res: FastifyReply
-    ): Promise<StreamableFile> {
-        const buffer = await this.userService.donwloadProfileImage(bearer);
+    ): Promise<StreamableFile|StatusOk> {
+        const profile = await this.userService.getProfile(param.id);
 
+        if(profile.image_size <= 0) return { status: 'failed', message: 'No image found' };
+        
         res.headers({
-            'Content-Length': Buffer.byteLength(buffer),
-            'Content-Disposition': 'attachment;filename=profile_image.png',
+            'Content-Length': profile.image_size,
+            'Content-Disposition': 'attachment;filename=' + profile.image_name,
         });
 
-        return new StreamableFile(buffer);
+        return new StreamableFile(profile.image_buffer);
     }
     
     //------------------------------ Notes ----------------------------------
 
     // open route
-    @Get('/notes') 
+    @Get('/notes')
     async getNoteList(
         @Query() query: PageOptionsDto
     ): Promise<ISerializeResponse> {
@@ -105,6 +101,7 @@ export class UsersController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
+    @Roles(RolesEnum.staff) // staff & admin role access
     @Post('/notes')
     async addNote(
         @Headers('authorization') bearer: string,
@@ -117,11 +114,11 @@ export class UsersController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @Roles(RolesEnum.admin) // only admin can delete notes
-    @Delete('/notes/:uuid')
+    @Delete('/notes/:id')
     async addNote(
-        @Param() param: SingleUUIDDto,
+        @Param() param: SingleIDDto,
     ): Promise<StatusOk> {
-        await this.userService.removeNote(param.uuid);
+        await this.userService.removeNote(param.id);
         return { status: 'ok', message: 'Note has been deleted' };
     }
 }

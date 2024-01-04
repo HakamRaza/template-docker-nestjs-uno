@@ -23,8 +23,14 @@ export class ProfileEntity {
     @Column({ type: 'string', length: 100 })
     fullname: string;
 
+    @Column({ type: 'text', nullable: true })
+	image_name: string;
+
+    @Column({ type: 'int', default: 0 })
+	image_size: number;
+
     @Column({ type: 'bytea', nullable: true })
-    image: Buffer;
+    image_buffer: Buffer;
 
     @Column({ type: 'string', length: 250, nullable: true })
     address: string
