@@ -36,14 +36,14 @@ export class AuthService {
 
 	async signup(dto: RegisterDto): Promise<UserEntity> {
 		// check email exist or username exist
-		const isExist = await this.userRepository.isUsernameOrEmailExist(dto.username, dto.email);
+		const isExist = await this.userRepository.isEmailExist(dto.email);
 		if (isExist) throw new ConflictException('Email or username is unavailable.')
 
 		// register new user
 		const user = await this.userRepository.addNew(dto);
 		
 		// send welcome mail
-		await this.mailService.sendWelcomeMail(user.username, user.email).catch((_err) => {
+		await this.mailService.sendWelcomeMail(user.email).catch((_err) => {
 			console.error(_err);
 			throw new BadRequestException('SMTP transport failed');
 		});
@@ -53,7 +53,7 @@ export class AuthService {
 
 	async login(dto: LoginDto): Promise<[UserEntity, string]> {
 		// find user
-		const user = await this.userRepository.findUser(dto.username);
+		const user = await this.userRepository.findUserByEmail(dto.username);
 		// check user is banned
 		if (user.is_banned) throw new ForbiddenException('Account has been banned. Please contact support for further details.')
 
@@ -65,7 +65,7 @@ export class AuthService {
 		const jwt: JwtPayloadBody = {
 			nbf: Math.floor(Date.now() / 1000) + (60 * 60),
 			[JWT_ROLE]: user.role,
-			[JWT_USER_ID]: user.id,
+			[JWT_USER_ID]: '' + user.id,
 			[JWT_SESSION_TOKEN]: randomBytes(10).toString('hex'),
 		}
 		

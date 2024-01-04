@@ -3,7 +3,6 @@ import {
 	BadRequestException,
 	NotFoundException,
 	Injectable,
-	UnprocessableEntityException,
 } from '@nestjs/common';
 
 // Other dependencies
@@ -19,13 +18,12 @@ export class UserRepository extends Repository<UserEntity> {
 		super(UserEntity, dataSource.createEntityManager());
 	}
 
-	async isUsernameOrEmailExist(username:string, email:string): Promise<boolean> {
+	async isEmailExist(email:string): Promise<boolean> {
 		try {
 			let anyExist = await this.count({ 
-				where: [
-					{ username },
-					{ email}
-				]
+				where: { 
+					email: email
+				}
 			});
 			return (anyExist > 0);
 		} catch (error) {
@@ -37,9 +35,8 @@ export class UserRepository extends Repository<UserEntity> {
 	async addNew(dto: RegisterDto): Promise<UserEntity> {
 		try {
 			const newUser: UserEntity = this.create({
-				username: dto.username,
-				password: dto.password,
 				email: dto.email,
+				password: dto.password,
 				role: dto.role
 			})
 
@@ -50,23 +47,21 @@ export class UserRepository extends Repository<UserEntity> {
 		}
 	}
 
-	async findUser(username: string): Promise<UserEntity> {
+	async findUserByEmail(email: string): Promise<UserEntity> {
 		try {
 			return this.findOneOrFail({
 				select: {
 					id: true,
-					username: true,
+					email: true,
 					password: true,
 					is_banned: true,
 					role: true,
 				},
-				where: {
-					username
-				},
+				where: { email },
 			});
 		} catch (error) {
 			console.error(error);
-			throw new NotFoundException('User could not found by given credentials.');
+			throw new NotFoundException('User could not found');
 		}
 	}
 }

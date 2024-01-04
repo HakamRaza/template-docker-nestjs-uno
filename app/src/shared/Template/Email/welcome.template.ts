@@ -10,12 +10,12 @@ const WelcomeTemplate = (dto: WelcomeEmailBody) => {
             <meta http-equiv="x-ua-compatible" content="ie=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-            <title>Welcome ${dto.username}</title>
+            <title>Welcome ${dto.to}</title>
         </head>
 
         <body>
             <p>
-                Hi <b>${dto.username}</b>,
+                Hi <b>${dto.to}</b>,
             </p>
             <p>
                 <b>Welcome!</b>
@@ -33,7 +33,7 @@ const WelcomeTemplate = (dto: WelcomeEmailBody) => {
     </html>`;
 
     const text = `
-        Hi ${dto.username}, 
+        Hi ${dto.to}, 
         
         Welcome.
         Login now at: "${dto.websiteUrl}"

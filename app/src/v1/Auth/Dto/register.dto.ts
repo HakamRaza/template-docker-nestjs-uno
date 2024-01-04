@@ -20,17 +20,6 @@ import { RolesEnum } from "src/shared/Enums/roles.enums";
 
 export class RegisterDto {
 	@ApiProperty({
-		example: 'myuser123',
-	})
-	@Transform(({ value }) => value.trim().toLowerCase())
-	@Type(() => String)
-	@IsString()
-	@IsNotEmpty()
-	@MinLength(3)
-	@NotContains(' ')
-	username: string
-
-	@ApiProperty({
 		example: 'demo_user@email.com',
 	})
 	@Transform(({ value }) => value.trim().toLowerCase())
